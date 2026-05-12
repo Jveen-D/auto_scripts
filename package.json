@@ -1,0 +1,12 @@
+{
+  "name": "auto-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "checkin:amux": "node scripts/amux-checkin.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
