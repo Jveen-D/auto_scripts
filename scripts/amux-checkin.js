@@ -1,7 +1,6 @@
 const endpoint = "https://api.amux.ai/api/user/checkin";
 
-const accessToken = process.env.AMUX_ACCESS_TOKEN;
-const cookie = normalizeCookie(process.env.AMUX_COOKIE || process.env.AMUX_SESSION);
+const accessToken = process.env.AMUX_ACCESS_TOKEN?.trim();
 const userId = process.env.AMUX_USER_ID?.trim();
 
 if (!userId) {
@@ -9,26 +8,18 @@ if (!userId) {
   process.exit(1);
 }
 
-if (!accessToken && !cookie) {
-  console.error("Missing auth. Add AMUX_ACCESS_TOKEN or AMUX_COOKIE as a GitHub Actions secret.");
+if (!accessToken) {
+  console.error("Missing AMUX_ACCESS_TOKEN. Add it as a GitHub Actions secret.");
   process.exit(1);
 }
 
 const headers = {
+  Authorization: `Bearer ${accessToken}`,
   "New-Api-User": userId,
   Accept: "application/json, text/plain, */*"
 };
 
-if (accessToken) {
-  headers.Authorization = `Bearer ${accessToken}`;
-} else {
-  headers.Cookie = cookie;
-}
-
-console.log(`Auth mode: ${accessToken ? "bearer token" : "session cookie"}`);
-if (cookie) {
-  console.log(`Cookie names: ${cookie.split(";").map((part) => part.trim().split("=")[0]).join(", ")}`);
-}
+console.log("Auth mode: bearer token");
 
 const response = await fetch(endpoint, {
   method: "POST",
@@ -59,22 +50,4 @@ if (message) {
 
 if (!response.ok) {
   process.exit(1);
-}
-
-function normalizeCookie(value) {
-  if (!value) {
-    return "";
-  }
-
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return "";
-  }
-
-  const sessionMatch = trimmed.match(/session=([^;\s]+)/i);
-  if (sessionMatch) {
-    return `session=${sessionMatch[1]}`;
-  }
-
-  return trimmed;
 }

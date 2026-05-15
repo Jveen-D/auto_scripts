@@ -24,5 +24,4 @@ jobs:
         run: npm run checkin:amux
         env:
           AMUX_ACCESS_TOKEN: ${{ secrets.AMUX_ACCESS_TOKEN }}
-          AMUX_COOKIE: ${{ secrets.AMUX_COOKIE }}
           AMUX_USER_ID: ${{ secrets.AMUX_USER_ID }}
